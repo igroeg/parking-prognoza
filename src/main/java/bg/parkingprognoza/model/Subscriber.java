@@ -37,8 +37,9 @@ public class Subscriber {
     @Column(name = "category", length = 20)
     private Set<EventCategory> categories = EnumSet.allOf(EventCategory.class);
 
-    /** Last day a digest was sent, so a re-run on the same day does not mail twice. */
-    private LocalDate lastNotifiedOn;
+    /** Last day each mail was sent, so a re-run on the same day does not mail twice. */
+    private LocalDate lastMorningMailOn;
+    private LocalDate lastEveningMailOn;
 
     @Column(nullable = false)
     private Instant createdAt = Instant.now();
@@ -67,7 +68,9 @@ public class Subscriber {
     public void setCategories(Set<EventCategory> categories) {
         this.categories = categories.isEmpty() ? EnumSet.noneOf(EventCategory.class) : EnumSet.copyOf(categories);
     }
-    public LocalDate getLastNotifiedOn() { return lastNotifiedOn; }
-    public void setLastNotifiedOn(LocalDate lastNotifiedOn) { this.lastNotifiedOn = lastNotifiedOn; }
+    public LocalDate getLastMorningMailOn() { return lastMorningMailOn; }
+    public void setLastMorningMailOn(LocalDate day) { this.lastMorningMailOn = day; }
+    public LocalDate getLastEveningMailOn() { return lastEveningMailOn; }
+    public void setLastEveningMailOn(LocalDate day) { this.lastEveningMailOn = day; }
     public Instant getCreatedAt() { return createdAt; }
 }

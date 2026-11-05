@@ -15,4 +15,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findByStartsAtGreaterThanEqualOrderByStartsAt(LocalDateTime from);
 
     List<Event> findBySourceAndStartsAtGreaterThanEqual(String source, LocalDateTime from);
+
+    Optional<Event> findTopBySourceNotOrderByUpdatedAtDesc(String excludedSource);
 }

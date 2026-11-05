@@ -8,7 +8,10 @@
     <p class="muted">Абонати: <b th:text="${confirmedCount}"></b> потвърдени от <b th:text="${subscriberCount}"></b></p>
     <div class="actions">
         <form th:action="@{/admin/sync}" method="post"><button type="submit">Обнови от източниците</button></form>
-        <form th:action="@{/admin/notify}" method="post"><button type="submit" class="secondary">Изпрати днешните писма сега</button></form>
+        <form th:action="@{/admin/notify}" method="post"><input type="hidden" name="digest" value="MORNING">
+            <button type="submit" class="secondary">Изпрати сутрешните писма (за днес)</button></form>
+        <form th:action="@{/admin/notify}" method="post"><input type="hidden" name="digest" value="EVENING">
+            <button type="submit" class="secondary">Изпрати вечерните писма (за утре)</button></form>
     </div>
 
     <section class="card">

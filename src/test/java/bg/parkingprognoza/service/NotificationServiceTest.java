@@ -5,6 +5,7 @@ import bg.parkingprognoza.model.EventCategory;
 import bg.parkingprognoza.model.EventRepository;
 import bg.parkingprognoza.model.Subscriber;
 import bg.parkingprognoza.model.SubscriberRepository;
+import bg.parkingprognoza.service.NotificationService.Digest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +51,20 @@ class NotificationServiceTest {
         subscriber("day-before@example.com", false, true, EnumSet.allOf(EventCategory.class));
         subscriber("theatre-only-today@example.com", true, false, EnumSet.of(EventCategory.THEATRE));
 
-        assertThat(notifications.notifyAll(false)).isEqualTo(2);
+        // morning: today's events, only for "same day" subscribers who want that category
+        assertThat(notifications.send(Digest.MORNING, false)).isEqualTo(1);
         verify(mail).send(eq("same-day@example.com"), startsWith("Днес"), eq("digest"), any(), any());
+
+        // evening: tomorrow's events, only for "day before" subscribers
+        assertThat(notifications.send(Digest.EVENING, false)).isEqualTo(1);
         verify(mail).send(eq("day-before@example.com"), startsWith("Утре"), eq("digest"), any(), any());
+
         verify(mail, never()).send(eq("theatre-only-today@example.com"), any(), any(), any(), any());
 
-        // a second run on the same day does not mail again
-        assertThat(notifications.notifyAll(false)).isZero();
+        // a second run on the same day does not mail again, unless forced from /admin
+        assertThat(notifications.send(Digest.MORNING, false)).isZero();
+        assertThat(notifications.send(Digest.EVENING, false)).isZero();
+        assertThat(notifications.send(Digest.MORNING, true)).isEqualTo(1);
     }
 
     @Test
@@ -65,7 +73,7 @@ class NotificationServiceTest {
         Subscriber s = new Subscriber("pending@example.com");
         subscribers.save(s);
 
-        assertThat(notifications.notifyAll(false)).isZero();
+        assertThat(notifications.send(Digest.MORNING, false)).isZero();
         verify(mail, never()).send(any(), any(), any(), any(), any());
     }
 

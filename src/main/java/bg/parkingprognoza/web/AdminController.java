@@ -85,8 +85,10 @@ public class AdminController {
     }
 
     @PostMapping("/notify")
-    String notifyNow(RedirectAttributes flash) {
-        flash.addFlashAttribute("info", "Изпратени писма: " + notifications.notifyAll(true));
+    String notifyNow(@RequestParam NotificationService.Digest digest, RedirectAttributes flash) {
+        int sent = notifications.send(digest, true);
+        String which = digest == NotificationService.Digest.MORNING ? "Сутрешни (за днес)" : "Вечерни (за утре)";
+        flash.addFlashAttribute("info", which + " писма: изпратени " + sent);
         return "redirect:/admin";
     }
 }

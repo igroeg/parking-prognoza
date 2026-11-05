@@ -34,35 +34,50 @@ public class NotificationService {
         this.clock = clock;
     }
 
-    /** @return number of mails sent */
-    public int notifyAll(boolean force) {
+    /** Which daily mail: the morning one is about today, the evening one about tomorrow. */
+    public enum Digest {
+        MORNING, EVENING
+    }
+
+    /**
+     * Sends one digest to every confirmed subscriber who wants it and has matching events.
+     *
+     * @param force send even if this digest already went out today (admin button)
+     * @return number of mails sent
+     */
+    public int send(Digest digest, boolean force) {
         LocalDate today = LocalDate.now(clock);
-        List<Event> todays = eventsOn(today);
-        List<Event> tomorrows = eventsOn(today.plusDays(1));
+        boolean morning = digest == Digest.MORNING;
+        List<Event> candidates = eventsOn(morning ? today : today.plusDays(1));
         int sent = 0;
         for (Subscriber s : subscribers.findByConfirmedTrue()) {
-            if (!force && today.equals(s.getLastNotifiedOn())) {
+            boolean wanted = morning ? s.isNotifySameDay() : s.isNotifyDayBefore();
+            LocalDate lastSent = morning ? s.getLastMorningMailOn() : s.getLastEveningMailOn();
+            if (!wanted || (!force && today.equals(lastSent))) {
                 continue;
             }
-            List<Event> forToday = s.isNotifySameDay() ? filter(todays, s) : List.of();
-            List<Event> forTomorrow = s.isNotifyDayBefore() ? filter(tomorrows, s) : List.of();
-            if (forToday.isEmpty() && forTomorrow.isEmpty()) {
+            List<Event> list = filter(candidates, s);
+            if (list.isEmpty()) {
                 continue;
             }
             try {
-                mail.send(s.getEmail(), subject(forToday, forTomorrow), "digest", Map.of(
-                        "today", forToday,
-                        "tomorrow", forTomorrow,
+                mail.send(s.getEmail(), subject(digest, list), "digest", Map.of(
+                        "today", morning ? list : List.of(),
+                        "tomorrow", morning ? List.of() : list,
                         "prefsUrl", subscriptions.prefsUrl(s),
                         "unsubscribeUrl", subscriptions.unsubscribeUrl(s)), subscriptions.unsubscribeUrl(s));
-                s.setLastNotifiedOn(today);
+                if (morning) {
+                    s.setLastMorningMailOn(today);
+                } else {
+                    s.setLastEveningMailOn(today);
+                }
                 subscribers.save(s);
                 sent++;
             } catch (RuntimeException e) {
-                log.error("Could not notify subscriber {}", s.getId(), e);
+                log.error("Could not send {} mail to subscriber {}", digest, s.getId(), e);
             }
         }
-        log.info("Daily notification: {} mails sent ({} events today, {} tomorrow)", sent, todays.size(), tomorrows.size());
+        log.info("{} mail: {} sent ({} events)", digest, sent, candidates.size());
         return sent;
     }
 
@@ -74,11 +89,10 @@ public class NotificationService {
         return list.stream().filter(e -> s.wants(e.getCategory())).toList();
     }
 
-    static String subject(List<Event> today, List<Event> tomorrow) {
-        if (!today.isEmpty()) {
-            return "Днес до стадиона: " + titles(today) + " – трудно паркиране";
-        }
-        return "Утре до стадиона: " + titles(tomorrow);
+    static String subject(Digest digest, List<Event> list) {
+        return digest == Digest.MORNING
+                ? "Днес до стадиона: " + titles(list) + " – трудно паркиране"
+                : "Утре до стадиона: " + titles(list);
     }
 
     private static String titles(List<Event> list) {

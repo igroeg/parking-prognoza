@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -49,6 +50,13 @@ public class EventSyncService {
         } finally {
             running = false;
         }
+    }
+
+    /** True if nothing was synced within {@code maxAge} (or never), e.g. on the very first start. */
+    public boolean isStale(Duration maxAge) {
+        return events.findTopBySourceNotOrderByUpdatedAtDesc(Event.MANUAL_SOURCE)
+                .map(e -> e.getUpdatedAt().isBefore(Instant.now(clock).minus(maxAge)))
+                .orElse(true);
     }
 
     /** True while a sync runs; the site shows a notice, which matters on the very first start. */
