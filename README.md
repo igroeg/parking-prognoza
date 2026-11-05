@@ -64,7 +64,14 @@ ADMIN_PASSWORD=secret ./mvnw spring-boot:run
 ```
 
 При първия старт се прави синхронизация във фонов режим (около минута заради футбола). Без SMTP настройки писмата
-само се логват – удобно за разработка. Данните са в H2 файл в `./data/`.
+само се логват – удобно за разработка. За да видите писмата като истински, пуснете локален тестов SMTP с
+уеб интерфейс, напр. [Mailpit](https://mailpit.axllent.org/):
+
+```bash
+docker run -d --name mailpit -p 8025:8025 -p 1025:1025 axllent/mailpit
+MAIL_HOST=localhost MAIL_PORT=1025 MAIL_SMTP_AUTH=false MAIL_STARTTLS=false ADMIN_PASSWORD=secret ./mvnw spring-boot:run
+# писмата: http://localhost:8025
+``` Данните са в H2 файл в `./data/`.
 
 ```bash
 ./mvnw test   # тестовете работят без мрежа – източниците се тестват с примерни HTML/JSON файлове
@@ -77,6 +84,7 @@ ADMIN_PASSWORD=secret ./mvnw spring-boot:run
 | `BASE_URL` | Публичен адрес; ползва се в линковете в писмата и календара |
 | `ADMIN_USER`, `ADMIN_PASSWORD` | Вход за `/admin` (без парола се генерира временна и се логва) |
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM` | SMTP, напр. Brevo (`smtp-relay.brevo.com`) или Gmail с app password |
+| `MAIL_SMTP_AUTH`, `MAIL_STARTTLS` | `false` и `false` за локален тестов SMTP (по подразбиране `true`) |
 | `DATABASE_URL`, `DATABASE_USER`, `DATABASE_PASSWORD` | напр. `jdbc:postgresql://host/db`; по подразбиране H2 файл |
 
 Графикът е в `application.properties` (часова зона Europe/Sofia): синхронизация веднъж дневно в 18:00;

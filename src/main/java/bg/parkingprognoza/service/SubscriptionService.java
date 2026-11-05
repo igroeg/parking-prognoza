@@ -39,14 +39,14 @@ public class SubscriptionService {
         Optional<Subscriber> existing = subscribers.findByEmailIgnoreCase(email);
         if (existing.isPresent() && existing.get().isConfirmed()) {
             Subscriber s = existing.get();
-            mail.send(s.getEmail(), "Вашият абонамент за събития на стадиона", "manage",
+            mail.send(s.getEmail(), "Паркинг прогноза: вече сте абонирани", "manage",
                     Map.of("prefsUrl", prefsUrl(s)), null);
             return;
         }
         Subscriber s = existing.orElseGet(() -> new Subscriber(email));
         apply(s, prefs);
         subscribers.save(s);
-        mail.send(s.getEmail(), "Потвърдете абонамента за събития на стадиона", "confirm",
+        mail.send(s.getEmail(), "Паркинг прогноза: потвърдете абонамента", "confirm",
                 Map.of("confirmUrl", props.trimmedBaseUrl() + "/confirm/" + s.getToken()), null);
     }
 
