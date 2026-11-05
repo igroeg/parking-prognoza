@@ -101,6 +101,13 @@ class PublicControllerTest {
     }
 
     @Test
+    void calendarLinksUseTheHostThePageWasOpenedWith() throws Exception {
+        mvc.perform(get("/").header("Host", "192.168.0.152:8080"))
+                .andExpect(content().string(containsString("webcal://192.168.0.152:8080/calendar.ics")))
+                .andExpect(content().string(not(containsString("webcal://localhost"))));
+    }
+
+    @Test
     void calendarFeedIsServed() throws Exception {
         mvc.perform(get("/calendar.ics").param("c", "MATCH"))
                 .andExpect(status().isOk())

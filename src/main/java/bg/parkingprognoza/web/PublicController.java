@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -84,7 +85,9 @@ public class PublicController {
         model.addAttribute("today", today);
         model.addAttribute("tomorrow", today.plusDays(1));
 
-        String https = props.trimmedBaseUrl() + "/calendar.ics";
+        // From the address the page was opened with, so a phone opening http://192.168.x.x:8080
+        // gets a feed URL it can reach (BASE_URL is often localhost during development).
+        String https = ServletUriComponentsBuilder.fromCurrentContextPath().path("/calendar.ics").toUriString();
         String webcal = https.replaceFirst("^https?://", "webcal://");
         model.addAttribute("icsUrl", https);
         model.addAttribute("webcalUrl", webcal);
