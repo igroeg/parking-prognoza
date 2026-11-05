@@ -1,0 +1,6 @@
+{"props":{"pageProps":{"fallback":{"team-10144":{"fixtures":{"allFixtures":{"fixtures":[
+ {"id":5760500,"pageUrl":"/matches/x/old#5760500","home":{"id":10144,"name":"CSKA Sofia"},"away":{"id":1,"name":"Botev Plovdiv"},"tournament":{"name":"First Professional League"},"status":{"utcTime":"2026-10-01T16:00:00.000Z","started":true,"finished":true,"cancelled":false}},
+ {"id":6112542,"pageUrl":"/matches/trabzonspor-vs-cska-sofia/39unf8#6112542","home":{"id":10144,"name":"CSKA Sofia"},"away":{"id":9752,"name":"Trabzonspor"},"tournament":{"name":"Conference League"},"status":{"utcTime":"2026-11-26T20:00:00.000Z","started":false,"finished":false,"cancelled":false,"matchTimeTbd":false,"matchDateTbd":false}},
+ {"id":5760530,"pageUrl":"/matches/botev-vs-cska/abc#5760530","home":{"id":2,"name":"Botev Plovdiv"},"away":{"id":10144,"name":"CSKA Sofia"},"tournament":{"name":"First Professional League"},"status":{"utcTime":"2026-11-22T16:00:00.000Z","started":false,"finished":false,"cancelled":false}},
+ {"id":5760612,"pageUrl":"/matches/levski-sofia-vs-cska-sofia/2wyg04#5760612","home":{"id":10144,"name":"CSKA Sofia"},"away":{"id":8632,"name":"Levski Sofia"},"tournament":{"name":"First Professional League"},"status":{"utcTime":"2027-04-17T16:00:00.000Z","started":false,"finished":false,"cancelled":false,"matchTimeTbd":false,"matchDateTbd":true}}
+]}}}}}}}

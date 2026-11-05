@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<head th:replace="~{fragments :: head('Админ')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="narrow wide">
+    <p class="notice" th:if="${info}" th:text="${info}"></p>
+    <p class="muted">Абонати: <b th:text="${confirmedCount}"></b> потвърдени от <b th:text="${subscriberCount}"></b></p>
+    <div class="actions">
+        <form th:action="@{/admin/sync}" method="post"><button type="submit">Обнови от източниците</button></form>
+        <form th:action="@{/admin/notify}" method="post"><button type="submit" class="secondary">Изпрати днешните писма сега</button></form>
+    </div>
+
+    <section class="card">
+        <h2>Добави събитие ръчно</h2>
+        <p class="muted small">Например мач на националния отбор или финал за купата.</p>
+        <form th:action="@{/admin/events}" method="post" class="grid">
+            <label>Заглавие <input name="title" required placeholder="България – Грузия"></label>
+            <label>Тип
+                <select name="category">
+                    <option th:each="c : ${allCategories}" th:value="${c}" th:text="${c.label}"></option>
+                </select>
+            </label>
+            <label>Дата <input type="date" name="date" required></label>
+            <label>Час <input type="time" name="time" required value="20:45"></label>
+            <label>Място <input name="venue" placeholder="Национален стадион „Васил Левски“"></label>
+            <label>Линк <input name="url" type="url" placeholder="https://..."></label>
+            <button type="submit">Добави</button>
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>Предстоящи</h2>
+        <table>
+            <tr><th>Кога</th><th>Тип</th><th>Заглавие</th><th>Билети</th><th>Източник</th><th></th></tr>
+            <tr th:each="e : ${events}">
+                <td th:text="${#temporals.format(e.startsAt, 'dd.MM.yyyy HH:mm')}"></td>
+                <td th:text="${e.category.icon}"></td>
+                <td th:text="${e.title}"></td>
+                <td th:text="${e.ticket.label}"></td>
+                <td th:text="${e.source}"></td>
+                <td>
+                    <form th:if="${e.manual}" th:action="@{/admin/events/{id}/delete(id=${e.id})}" method="post">
+                        <button type="submit" class="link danger">изтрий</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </section>
+</main>
+</body>
+</html>

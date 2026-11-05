@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<head th:replace="~{fragments :: head('Настройки на абонамента')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="narrow">
+    <p class="notice" th:if="${param.confirmed}">✅ Абонаментът е потвърден.</p>
+    <p class="notice" th:if="${param.saved}">✅ Настройките са запазени.</p>
+    <section class="card">
+        <h1>Настройки</h1>
+        <p class="muted" th:text="${form.email}"></p>
+        <form th:action="@{/preferences/{t}(t=${token})}" th:object="${form}" method="post">
+            <div th:replace="~{fragments :: prefs}"></div>
+            <button type="submit">Запази</button>
+        </form>
+        <form th:action="@{/unsubscribe/{t}(t=${token})}" method="post" class="inline">
+            <button type="submit" class="link danger">Отпиши ме</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>

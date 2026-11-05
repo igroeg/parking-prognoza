@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<body style="font-family: Arial, sans-serif; color: #1f2937;">
+<div th:unless="${today.isEmpty()}">
+    <h2 style="color:#b91c1c;">🚗 Днес около стадиона ще е трудно за паркиране</h2>
+    <ul>
+        <li th:each="e : ${today}" style="margin-bottom:6px;">
+            <b th:text="${#temporals.format(e.startsAt, 'HH:mm')}"></b>
+            <span th:text="${e.category.icon}"></span>
+            <a th:if="${e.url}" th:href="${e.url}" th:text="${e.title}"></a><span th:unless="${e.url}" th:text="${e.title}"></span>
+            <span style="color:#6b7280;" th:text="${e.venue != null ? '– ' + e.venue : ''}"></span>
+            <b th:if="${e.ticket.name() == 'SOLD_OUT'}" style="color:#b91c1c;">· разпродадено</b>
+            <span th:if="${e.ticket.name() == 'LIMITED'}" style="color:#c2410c;">· последни билети</span>
+        </li>
+    </ul>
+</div>
+<div th:unless="${tomorrow.isEmpty()}">
+    <h2>📅 Утре</h2>
+    <ul>
+        <li th:each="e : ${tomorrow}" style="margin-bottom:6px;">
+            <b th:text="${#temporals.format(e.startsAt, 'HH:mm')}"></b>
+            <span th:text="${e.category.icon}"></span>
+            <a th:if="${e.url}" th:href="${e.url}" th:text="${e.title}"></a><span th:unless="${e.url}" th:text="${e.title}"></span>
+            <span style="color:#6b7280;" th:text="${e.venue != null ? '– ' + e.venue : ''}"></span>
+            <b th:if="${e.ticket.name() == 'SOLD_OUT'}" style="color:#b91c1c;">· разпродадено</b>
+            <span th:if="${e.ticket.name() == 'LIMITED'}" style="color:#c2410c;">· последни билети</span>
+        </li>
+    </ul>
+</div>
+<p><a th:href="${baseUrl}">Всички предстоящи събития</a></p>
+<p style="color:#6b7280;font-size:12px;">
+    <a th:href="${prefsUrl}" style="color:#6b7280;">Настройки</a> ·
+    <a th:href="${unsubscribeUrl}" style="color:#6b7280;">Отписване</a>
+</p>
+</body>
+</html>

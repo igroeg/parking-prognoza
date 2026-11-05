@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<head th:replace="~{fragments :: head('Паркинг прогноза – събития до стадион „Васил Левски“')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="layout">
+    <section class="events">
+        <section class="highlight" th:unless="${nextMajor.isEmpty()}">
+            <h2>🚨 Следващи мачове и концерти</h2>
+            <ul>
+                <li th:each="e : ${nextMajor}"
+                    th:with="days=${T(java.time.temporal.ChronoUnit).DAYS.between(today, e.startsAt.toLocalDate())}">
+                    <span class="when">
+                        <span th:if="${days == 0}" class="badge">Днес</span>
+                        <span th:if="${days == 1}" class="badge soft">Утре</span>
+                        <span th:if="${days > 1}" class="in-days" th:text="${'след ' + days + ' дни'}">след 3 дни</span>
+                    </span>
+                    <span class="date" th:text="${#temporals.format(e.startsAt, 'EEE d MMM, HH:mm')}">нд 8 ное, 17:00</span>
+                    <span class="cat" th:text="${e.category.icon}">⚽</span>
+                    <a th:if="${e.url}" th:href="${e.url}" th:text="${e.title}" target="_blank" rel="noopener">Заглавие</a>
+                    <span th:unless="${e.url}" th:text="${e.title}">Заглавие</span>
+                    <span th:replace="~{fragments :: ticket(${e})}"></span>
+                    <span class="venue" th:text="${e.venue}">Място</span>
+                </li>
+            </ul>
+        </section>
+
+        <h1>Предстоящи събития</h1>
+        <nav class="filters">
+            <a th:href="@{/}" th:classappend="${show.name() == 'ALL'} ? 'active'"
+               th:text="${'Всички (' + allCount + ')'}">Всички</a>
+            <a th:href="@{/(show='MAJOR')}" th:classappend="${show.name() == 'MAJOR'} ? 'active'"
+               th:text="${'⚽🎤 Мачове и концерти (' + majorCount + ')'}">Мачове и концерти</a>
+            <a th:href="@{/(show='THEATRE')}" th:classappend="${show.name() == 'THEATRE'} ? 'active'"
+               th:text="${'🎭 Театър (' + theatreCount + ')'}">Театър</a>
+        </nav>
+        <p th:if="${byDay.isEmpty()}" class="muted">Няма известни предстоящи събития.</p>
+        <div th:each="entry : ${byDay}" class="day"
+             th:with="hasMajor=${#lists.contains(entry.value.![category.major], true)}"
+             th:classappend="${(entry.key == today ? 'is-today ' : '') + (entry.key == tomorrow ? 'is-tomorrow ' : '') + (hasMajor ? 'has-major' : 'minor-only')}">
+            <h2>
+                <span th:if="${entry.key == today}" class="badge">Днес</span>
+                <span th:if="${entry.key == tomorrow}" class="badge soft">Утре</span>
+                <span th:text="${#temporals.format(entry.key, 'EEEE, d MMMM yyyy')}">петък, 6 ноември</span>
+            </h2>
+            <ul>
+                <li th:each="e : ${entry.value}" th:class="${e.category.major} ? 'major' : 'minor'">
+                    <span class="time" th:text="${#temporals.format(e.startsAt, 'HH:mm')}">19:00</span>
+                    <span class="cat" th:title="${e.category.label}" th:text="${e.category.icon}">⚽</span>
+                    <a th:if="${e.url}" th:href="${e.url}" th:text="${e.title}" target="_blank" rel="noopener">Заглавие</a>
+                    <span th:unless="${e.url}" th:text="${e.title}">Заглавие</span>
+                    <span th:replace="~{fragments :: ticket(${e})}"></span>
+                    <span class="venue" th:text="${e.venue}">Място</span>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <aside>
+        <section class="card">
+            <h2>📧 Известия по имейл</h2>
+            <form th:action="@{/subscribe}" th:object="${form}" method="post">
+                <label for="email">Имейл</label>
+                <input id="email" type="email" th:field="*{email}" placeholder="you@example.com" required>
+                <p class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+                <div th:replace="~{fragments :: prefs}"></div>
+                <button type="submit">Абонирай ме</button>
+                <p class="muted small">Ще получите писмо за потвърждение. Можете да се отпишете по всяко време.</p>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>📅 Календар</h2>
+            <p>Абонирайте се за календара – обновява се автоматично, когато се появят нови събития.
+                Напомняне има предишния ден и 3 часа преди началото.</p>
+            <a class="button" th:href="${webcalUrl}">iPhone / Mac / Outlook</a>
+            <a class="button secondary" th:href="${googleUrl}" target="_blank" rel="noopener">Google Calendar</a>
+            <p class="muted small">Или добавете ръчно този адрес:<br><code th:text="${icsUrl}"></code></p>
+            <p class="muted small">Google Calendar обновява абонирани календари на около 12–24 ч. и не показва
+                напомнянията от тях, затова за Google ползвайте и имейл известията.</p>
+        </section>
+    </aside>
+</main>
+</body>
+</html>

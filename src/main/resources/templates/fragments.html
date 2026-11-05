@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title}">Паркинг прогноза</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header th:fragment="header" class="site-header">
+    <a href="/" class="brand">🚗 Паркинг прогноза</a>
+    <span class="tagline">Кога около НС „Васил Левски“ ще е невъзможно да се паркира</span>
+</header>
+
+<span th:fragment="ticket(e)" th:if="${e.ticket.known}" class="ticket"
+      th:classappend="${'ticket-' + #strings.toLowerCase(e.ticket.name())}">
+    <a th:if="${e.ticketLink}" th:href="${e.ticketLink}" target="_blank" rel="noopener"
+       th:text="${e.ticket.label}" th:title="${e.ticket.name() == 'SOLD_OUT'} ? 'Очаквайте пълна зала/стадион' : 'Към билетите'">Разпродадено</a>
+    <span th:unless="${e.ticketLink}" th:text="${e.ticket.label}">Разпродадено</span>
+</span>
+
+<fieldset th:fragment="prefs" class="prefs">
+    <legend>Кога да ви пишем</legend>
+    <label><input type="checkbox" th:field="*{notifySameDay}"> Сутринта в деня на събитието</label>
+    <label><input type="checkbox" th:field="*{notifyDayBefore}"> Предишния ден</label>
+    <legend class="sub">За какви събития</legend>
+    <label th:each="c : ${allCategories}">
+        <input type="checkbox" th:field="*{categories}" th:value="${c}">
+        <span th:text="${c.icon + ' ' + c.label}">Мач</span>
+    </label>
+</fieldset>
+</body>
+</html>

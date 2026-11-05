@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<head th:replace="~{fragments :: head('Отписване')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="narrow">
+    <section class="card">
+        <h1>Отписване</h1>
+        <p>Сигурни ли сте, че не искате повече писма за събития на стадиона?</p>
+        <form th:action="@{/unsubscribe/{t}(t=${token})}" method="post">
+            <button type="submit" class="danger">Да, отпиши ме</button>
+        </form>
+        <p><a th:href="@{/preferences/{t}(t=${token})}">Само искам да променя настройките</a></p>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<head th:replace="~{fragments :: head(${title})}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="narrow">
+    <section class="card">
+        <h1 th:text="${title}"></h1>
+        <p th:text="${text}"></p>
+        <p><a href="/">← Към събитията</a></p>
+    </section>
+</main>
+</body>
+</html>
