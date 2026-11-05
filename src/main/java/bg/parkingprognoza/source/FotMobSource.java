@@ -34,7 +34,7 @@ import java.util.Optional;
  * About one request per upcoming match per run; run it at most a few times a day.
  */
 @Component
-@Order(1)
+@Order(5)
 @ConditionalOnProperty(name = "app.sources.football.enabled", havingValue = "true", matchIfMissing = true)
 public class FotMobSource implements EventSource {
 

@@ -44,6 +44,7 @@ code { word-break: break-all; background: #f3f4f6; padding: 2px 4px; border-radi
 table { width: 100%; border-collapse: collapse; font-size: .9rem; }
 th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
 form.inline { margin-top: 12px; }
+.notice.syncing { background: #eff6ff; border-color: #bfdbfe; }
 
 .highlight { background: #fff7ed; border: 1px solid #fdba74; border-radius: 12px; padding: 16px 18px; margin-bottom: 24px; }
 .highlight ul { list-style: none; margin: 0; padding: 0; }

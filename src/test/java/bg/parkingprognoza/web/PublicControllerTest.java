@@ -4,6 +4,7 @@ import bg.parkingprognoza.model.Event;
 import bg.parkingprognoza.model.EventCategory;
 import bg.parkingprognoza.model.EventRepository;
 import bg.parkingprognoza.model.SubscriberRepository;
+import bg.parkingprognoza.service.EventSyncService;
 import bg.parkingprognoza.service.MailService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -36,6 +38,7 @@ class PublicControllerTest {
     @Autowired EventRepository events;
     @Autowired Clock clock;
     @MockitoBean MailService mail;
+    @MockitoBean EventSyncService sync;
 
     @Test
     void homePageRenders() throws Exception {
@@ -98,6 +101,15 @@ class PublicControllerTest {
         mvc.perform(post("/subscribe").with(csrf()).param("email", "not-an-email"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Невалиден имейл")));
+    }
+
+    @Test
+    void showsNoticeWhileSyncing() throws Exception {
+        when(sync.isRunning()).thenReturn(true);
+        mvc.perform(get("/"))
+                .andExpect(content().string(containsString("Обновяване на събитията")))
+                .andExpect(content().string(containsString("http-equiv=\"refresh\"")))
+                .andExpect(content().string(not(containsString("Няма известни предстоящи събития"))));
     }
 
     @Test

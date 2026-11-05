@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="bg">
 <head th:fragment="head(title)">
     <meta charset="UTF-8">
+    <meta th:if="${syncing}" http-equiv="refresh" content="10">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${title}">Паркинг прогноза</title>
     <link rel="stylesheet" href="/style.css">

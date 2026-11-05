@@ -25,6 +25,8 @@
             </ul>
         </section>
 
+        <p th:if="${syncing}" class="notice syncing">⏳ Обновяване на събитията от източниците… Страницата ще се
+            презареди сама. При първо пускане отнема около минута – мачовете идват последни.</p>
         <h1>Предстоящи събития</h1>
         <nav class="filters">
             <a th:href="@{/}" th:classappend="${show.name() == 'ALL'} ? 'active'"
@@ -34,7 +36,7 @@
             <a th:href="@{/(show='THEATRE')}" th:classappend="${show.name() == 'THEATRE'} ? 'active'"
                th:text="${'🎭 Театър (' + theatreCount + ')'}">Театър</a>
         </nav>
-        <p th:if="${byDay.isEmpty()}" class="muted">Няма известни предстоящи събития.</p>
+        <p th:if="${byDay.isEmpty() and !syncing}" class="muted">Няма известни предстоящи събития.</p>
         <div th:each="entry : ${byDay}" class="day"
              th:with="hasMajor=${#lists.contains(entry.value.![category.major], true)}"
              th:classappend="${(entry.key == today ? 'is-today ' : '') + (entry.key == tomorrow ? 'is-tomorrow ' : '') + (hasMajor ? 'has-major' : 'minor-only')}">

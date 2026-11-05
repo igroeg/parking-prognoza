@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * card is marked sold out.
  */
 @Component
-@Order(4)
+@Order(3)
 @ConditionalOnProperty(name = "app.sources.vidas.enabled", havingValue = "true", matchIfMissing = true)
 public class VidasArtArenaSource implements EventSource {
 

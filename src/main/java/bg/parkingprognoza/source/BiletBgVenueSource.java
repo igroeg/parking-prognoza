@@ -31,7 +31,7 @@ import java.util.Set;
  * schema.org Event in JSON-LD with the exact start time.
  */
 @Component
-@Order(3)
+@Order(2)
 @ConditionalOnProperty(name = "app.sources.bilet-bg.enabled", havingValue = "true", matchIfMissing = true)
 public class BiletBgVenueSource implements EventSource {
 

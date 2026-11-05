@@ -28,6 +28,7 @@ public class EventSyncService {
     private final EventRepository events;
     private final TransactionTemplate tx;
     private final Clock clock;
+    private volatile boolean running;
 
     public EventSyncService(List<EventSource> sources, EventRepository events, TransactionTemplate tx, Clock clock) {
         this.sources = sources;
@@ -42,6 +43,20 @@ public class EventSyncService {
      * @return a short per-source report, e.g. {"artvent": "53 events"}
      */
     public synchronized Map<String, String> syncAll() {
+        running = true;
+        try {
+            return doSyncAll();
+        } finally {
+            running = false;
+        }
+    }
+
+    /** True while a sync runs; the site shows a notice, which matters on the very first start. */
+    public boolean isRunning() {
+        return running;
+    }
+
+    private Map<String, String> doSyncAll() {
         Map<String, String> report = new LinkedHashMap<>();
         for (EventSource source : sources) {
             try {

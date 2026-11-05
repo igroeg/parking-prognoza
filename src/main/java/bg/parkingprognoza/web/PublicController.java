@@ -6,6 +6,7 @@ import bg.parkingprognoza.model.EventCategory;
 import bg.parkingprognoza.model.Subscriber;
 import bg.parkingprognoza.service.CalendarService;
 import bg.parkingprognoza.service.EventQueryService;
+import bg.parkingprognoza.service.EventSyncService;
 import bg.parkingprognoza.service.SubscriptionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -34,14 +35,16 @@ import java.util.stream.Collectors;
 public class PublicController {
 
     private final EventQueryService events;
+    private final EventSyncService sync;
     private final SubscriptionService subscriptions;
     private final CalendarService calendar;
     private final AppProperties props;
     private final Clock clock;
 
-    public PublicController(EventQueryService events, SubscriptionService subscriptions, CalendarService calendar,
-                            AppProperties props, Clock clock) {
+    public PublicController(EventQueryService events, EventSyncService sync, SubscriptionService subscriptions,
+                            CalendarService calendar, AppProperties props, Clock clock) {
         this.events = events;
+        this.sync = sync;
         this.subscriptions = subscriptions;
         this.calendar = calendar;
         this.props = props;
@@ -79,6 +82,7 @@ public class PublicController {
         model.addAttribute("byDay", byDay);
         model.addAttribute("nextMajor", nextMajor);
         model.addAttribute("show", show);
+        model.addAttribute("syncing", sync.isRunning());
         model.addAttribute("majorCount", upcoming.stream().filter(Show.MAJOR::includes).count());
         model.addAttribute("theatreCount", upcoming.stream().filter(Show.THEATRE::includes).count());
         model.addAttribute("allCount", upcoming.size());

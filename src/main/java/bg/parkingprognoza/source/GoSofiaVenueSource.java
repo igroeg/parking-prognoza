@@ -30,7 +30,7 @@ import java.util.Map;
  * cards carry a genre tag ("Футбол", "Концерт", ...) used for the category.
  */
 @Component
-@Order(2)
+@Order(1)
 @ConditionalOnProperty(name = "app.sources.go-sofia.enabled", havingValue = "true", matchIfMissing = true)
 public class GoSofiaVenueSource implements EventSource {
 

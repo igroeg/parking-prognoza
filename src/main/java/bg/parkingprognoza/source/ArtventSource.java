@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * "dd.MM" date (no year) and an "HH:mm" time.
  */
 @Component
-@Order(5)
+@Order(4)
 @ConditionalOnProperty(name = "app.sources.artvent.enabled", havingValue = "true", matchIfMissing = true)
 public class ArtventSource implements EventSource {
 
